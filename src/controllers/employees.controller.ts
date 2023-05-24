@@ -1,28 +1,27 @@
-import { PrismaClient } from "@prisma/client";
+import { Employee, PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
-import { Employee } from "@prisma/client";
+import { Request, Response } from "express";
 
-export const getAllEmployees = async (req, res) => {
+export const getAllEmployees = async (req: Request, res: Response) => {
   return res.json(await db.employee.findMany());
 };
 
-export const getEmployeeById = async (req, res) => {
+export const getEmployeeById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const employee = await db.employee.findUnique({ where: { id } });
-  
-  if(!employee)
-    return res.status(404).json({ message: "Employee not found" });
+
+  if (!employee) return res.status(404).json({ message: "Employee not found" });
 
   return res.json(employee);
-}
+};
 
-export const createEmployee = async (req, res) => {
+export const createEmployee = async (req: Request, res: Response) => {
   const { name, email, phone, address, salary } = req.body;
 
-  if(!name || !email || !phone || !address || !salary)
+  if (!name || !email || !phone || !address || !salary)
     return res.status(400).json({ message: "Invalid employee data" });
 
-  const employeeData = {
+  const employeeData: Omit<Employee, "id"> = {
     name,
     email,
     phone,
@@ -31,16 +30,16 @@ export const createEmployee = async (req, res) => {
   };
 
   return res.json(await db.employee.create({ data: employeeData }));
-}
+};
 
-export const updateEmployee = async (req, res) => {
+export const updateEmployee = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, email, phone, address, salary } = req.body;
 
-  if(!name || !email || !phone || !address || !salary)
+  if (!name || !email || !phone || !address || !salary)
     return res.status(400).json({ message: "Invalid employee data" });
 
-  const employeeData = {
+  const employeeData: Omit<Employee, "id"> = {
     name,
     email,
     phone,
@@ -53,20 +52,17 @@ export const updateEmployee = async (req, res) => {
     data: employeeData,
   });
 
-  if(!employee)
-    return res.status(404).json({ message: "Employee not found" });
+  if (!employee) return res.status(404).json({ message: "Employee not found" });
 
   return res.json(employee);
-}
+};
 
-export const deleteEmployee = async (req, res) => {
+export const deleteEmployee = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const employee = await db.employee.delete({ where: { id } });
 
-  if(!employee)
-    return res.status(404).json({ message: "Employee not found" });
+  if (!employee) return res.status(404).json({ message: "Employee not found" });
 
   return res.json(employee);
-}
-
+};

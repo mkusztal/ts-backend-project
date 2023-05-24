@@ -1,44 +1,43 @@
-import { PrismaClient } from "@prisma/client";
+import { Product, PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
-import { Product } from "@prisma/client";
+import { Request, Response } from "express";
 
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req: Request, res: Response) => {
   return res.json(await db.product.findMany());
 };
 
-export const getProductById = async (req, res) => {
+export const getProductById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const product = await db.product.findUnique({ where: { id } });
-  
-  if(!product)
-    return res.status(404).json({ message: "Product not found" });
+
+  if (!product) return res.status(404).json({ message: "Product not found" });
 
   return res.json(product);
-}
+};
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req: Request, res: Response) => {
   const { name, description, price } = req.body;
 
-  if(!name || !description || !price)
+  if (!name || !description || !price)
     return res.status(400).json({ message: "Invalid product data" });
 
-  const productData = { 
+  const productData: Omit<Product, "id"> = {
     name,
     description,
     price,
   };
 
   return res.json(await db.product.create({ data: productData }));
-}
+};
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, description, price } = req.body;
-  
-  if(!name || !description || !price)
+
+  if (!name || !description || !price)
     return res.status(400).json({ message: "Invalid product data" });
 
-  const productData = { 
+  const productData: Omit<Product, "id"> = {
     name,
     description,
     price,
@@ -49,20 +48,17 @@ export const updateProduct = async (req, res) => {
     data: productData,
   });
 
-  if(!product)
-    return res.status(404).json({ message: "Product not found" });
+  if (!product) return res.status(404).json({ message: "Product not found" });
 
   return res.json(product);
-}
+};
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const product = await db.product.delete({ where: { id } });
 
-  if(!product)
-    return res.status(404).json({ message: "Product not found" });
+  if (!product) return res.status(404).json({ message: "Product not found" });
 
   return res.json(product);
-}
-
+};
