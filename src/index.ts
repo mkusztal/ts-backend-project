@@ -1,18 +1,23 @@
-import express from "express";
+import express, { Router } from "express";
 import cors from "cors";
 import departmentsRoutes from "./routes/departments.routes";
 import employeesRoutes from "./routes/employees.routes";
 import productsRoutes from "./routes/products.routes";
 
+interface RouteGroup {
+  path: string;
+  routes: Router;
+}
+
 interface IApp {
   app: express.Application;
-  routes: [];
+  routes: RouteGroup[];
   server: any;
 }
 
 class App implements IApp {
   app: express.Application;
-  routes: [] = [];
+  routes: RouteGroup[] = [];
   server: any;
 
   constructor() {
