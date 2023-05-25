@@ -16,25 +16,25 @@ interface IApp {
 }
 
 class App implements IApp {
-  app: express.Application;
-  routes: RouteGroup[] = [];
-  server: any;
+  public app: express.Application;
+  public routes: RouteGroup[] = [];
+  public server: any;
 
   constructor() {
     this.app = express();
   }
 
-  addRoutes(path: string, routes: express.Router) {
+  public addRoutes(path: string, routes: express.Router) {
     this.routes.push({ path, routes });
   }
 
-  prepareRoutes() {
+  private prepareRoutes() {
     for (const group of this.routes) {
       this.app.use(group.path, group.routes);
     }
   }
 
-  run(port: number | string) {
+  public run(port: number | string) {
     this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
